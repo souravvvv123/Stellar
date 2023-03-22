@@ -17,6 +17,8 @@ function getting_headers(){
     echo "$header"
     done < headers.txt
  }
+
+
 echo "enter Your Collaborator or callbackurl url"
 read callbackurl
 
@@ -38,15 +40,8 @@ elif [[ $parameter == "-L" ]]; then
          echo "the domain is $links and $multi"
     done < $wordlist
     exit 1
-else
-echo "Usage to scan a single domain: ./stellar.sh https://domain.com/"
-echo "Usage to scan a list of domains ./stellar.sh -L domains.txt "
-exit 1
 fi
 
 abc=$(curl -s $parameter --head -H $(getting_headers): $callbackurl| grep "Content-Length")
 echo "the url is:$parameter and the $abc"
- 
-
-
 
