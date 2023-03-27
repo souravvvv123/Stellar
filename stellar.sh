@@ -12,36 +12,54 @@ echo "  ##########       #      #########    #########  ######## #              
 
 parameter=$1
 
-function getting_headers(){
-    while read -r header; do
-    echo "$header"
-    done < headers.txt
+function getting_collaburl(){
+    echo "enter your collaborator URL"
+read collaburl
  }
 
 
-echo "enter Your Collaborator or callbackurl url"
-read callbackurl
 
-
-if [[ $parameter == "" || $parameter == "-H" ]]; then
-    echo "Usage to scan a single domain: ./stellar.sh https://domain.com/"
-    echo "Usage to scan a list of domains ./stellar.sh -L domains.txt "
-    exit 1
-
-elif [[ $parameter == "-L" ]]; then
-    
-    if [[ $# -lt 2 ]]; then
-        echo "Usage: ./stellar.sh -L domains.txt"
-        exit 1
-    fi
-    wordlist=$2
-    while read -r links; do
-         multi=$(curl -s $links --head -H $(getting_headers): $callback| grep "Content-Length")
-         echo "the domain is $links and $multi"
-    done < $wordlist
+if [[ $parameter == "" || $parameter == "-h" ]]; then
+    echo "Usage: to scan a single domain: ./stellar.sh https://www.domain.com/"
+    echo "Usage: to scan a list of domains ./stellar.sh -L domains.txt "
+    echo "Usage: to forcefully find status code of domain ./stellar.sh -f https://www.domain.com/"
+    echo "usage: to forcefully find the status code of a list of domains ./stellar.sh -g domains.txt"
     exit 1
 fi
+if [[ $parameter == http* ]]; then
+getting_collaburl
+while read -r header; do
+content_length=$(curl -s $parameter --head -H $header: $collaburl| grep -i "content-length")
+echo "the header is $header and the $content_length"
+done < headers.txt
+fi
+if [[ $parameter == "-L" ]]; then
+getting_collaburl
+while read -r names; do
+while read -r header; do
+content_length=$(curl -s $names --head -H $header: $collaburl| grep -i "content-length")
+echo "performing for $names"
+echo "the header is $header and the $content_length"
+done < headers.txt
+done < $2
+fi
 
-abc=$(curl -s $parameter --head -H $(getting_headers): $callbackurl| grep "Content-Length")
-echo "the url is:$parameter and the $abc"
+if [[ $parameter == "-f" ]]; then
+getting_collaburl
+while read -r headers; do 
+getting_length=$(curl -s $2 --head -H $headers: $collaburl | wc -c)
+echo "the header is $headers and the length is $getting_length"
+done < headers.txt
+fi
+
+if [[ $parameter == "-g" ]]; then
+getting_collaburl
+while read -r names; do
+while read -r header; do
+content_length=$(curl -s $names --head -H $header: $collaburl| wc -c)
+echo "performing for $names"
+echo "the header is $header and the content length is:$content_length"
+done < headers.txt
+done < $2
+fi
 
