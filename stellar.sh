@@ -9,7 +9,7 @@ echo "           #       #      #            #          #         #            #
 echo "  ##########       #      #########    #########  ######## #              #  #       #    "
 
 
-secret_token=notaoriginalone
+
 parameter=$1
 
 function getting_collaburl(){
